@@ -7064,6 +7064,17 @@
       </emu-alg>
     </emu-clause>
 
+    <emu-clause id="sec-getoptionsobject" aoid="GetOptionsObject">
+      <h1>GetOptionsObject ( _options_ )</h1>
+      <emu-alg>
+        1. If _options_ is *undefined*, then
+          1. Return OrdinaryObjectCreate(*null*).
+        1. If _options_ is an Object, then
+          1. Return _options_.
+        1. Throw a *TypeError* exception.
+      </emu-alg>
+    </emu-clause>
+
     <emu-clause id="sec-SetterThatIgnoresPrototypeProperties" type="abstract operation">
       <h1>
         SetterThatIgnoresPrototypeProperties (
@@ -43328,19 +43339,6 @@ THH:mm:ss.sss
             1. Let _byte_ be the integer value represented by _hexits_ in base-16 notation, using the letters A-F and a-f for digits with values 10 through 15.
             1. Append _byte_ to _bytes_.
           1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: ~none~ }.
-        </emu-alg>
-      </emu-clause>
-
-      <!-- Copied from ECMA-402/Temporal -->
-
-      <emu-clause id="sec-getoptionsobject" aoid="GetOptionsObject">
-        <h1>GetOptionsObject ( _options_ )</h1>
-        <emu-alg>
-          1. If _options_ is *undefined*, then
-            1. Return OrdinaryObjectCreate(*null*).
-          1. If _options_ is an Object, then
-            1. Return _options_.
-          1. Throw a *TypeError* exception.
         </emu-alg>
       </emu-clause>
     </emu-clause>
