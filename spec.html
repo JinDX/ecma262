@@ -42969,7 +42969,7 @@ THH:mm:ss.sss
 
   <emu-clause id="sec-uint8array">
     <h1>Uint8Array Objects</h1>
-    <p>A Uint8Array is a particular kind of _TypedArray_ as described above. In addition, there are certain additional methods on the Uint8Array constructor and on the Uint8Array prototype object.</p>
+    <p>A Uint8Array is a particular kind of _TypedArray_ as described above. In addition, there are additional methods on the Uint8Array constructor (<emu-xref href="#sec-additional-properties-of-the-uint8array-constructor"></emu-xref>) and on the Uint8Array prototype object (<emu-xref href="#sec-additional-properties-of-the-uint8array-prototype-object"></emu-xref>).</p>
 
     <emu-clause id="sec-additional-properties-of-the-uint8array-constructor">
       <h1>Additional Properties of the Uint8Array Constructor</h1>
@@ -42987,9 +42987,10 @@ THH:mm:ss.sss
           1. If _lastChunkHandling_ is not one of *"loose"*, *"strict"*, or *"stop-before-partial"*, throw a *TypeError* exception.
           1. Let _result_ be FromBase64(_string_, _alphabet_, _lastChunkHandling_).
           1. If _result_.[[Error]] is not ~none~, then
-            1. Throw _result_.[[Error]].
-          1. Let _resultLength_ be the length of _result_.[[Bytes]].
+            1. Return ThrowCompletion(_result_.[[Error]]).
+          1. Let _resultLength_ be the number of elements in _result_.[[Bytes]].
           1. Let _ta_ be ? <emu-meta suppress-effects="user-code">AllocateTypedArray(*"Uint8Array"*, %Uint8Array%, *"%Uint8Array.prototype%"*, _resultLength_)</emu-meta>.
+          1. Assert: _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]].[[ArrayBufferByteLength]] = the number of elements in _result_.[[Bytes]].
           1. Set the value at each index of _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]] to the value at the corresponding index of _result_.[[Bytes]].
           1. Return _ta_.
         </emu-alg>
@@ -43001,9 +43002,10 @@ THH:mm:ss.sss
           1. If _string_ is not a String, throw a *TypeError* exception.
           1. Let _result_ be FromHex(_string_).
           1. If _result_.[[Error]] is not ~none~, then
-            1. Throw _result_.[[Error]].
-          1. Let _resultLength_ be the length of _result_.[[Bytes]].
+            1. Return ThrowCompletion(_result_.[[Error]]).
+          1. Let _resultLength_ be the number of elements in _result_.[[Bytes]].
           1. Let _ta_ be ? <emu-meta suppress-effects="user-code">AllocateTypedArray(*"Uint8Array"*, %Uint8Array%, *"%Uint8Array.prototype%"*, _resultLength_)</emu-meta>.
+          1. Assert: _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]].[[ArrayBufferByteLength]] = the number of elements in _result_.[[Bytes]].
           1. Set the value at each index of _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]] to the value at the corresponding index of _result_.[[Bytes]].
           1. Return _ta_.
         </emu-alg>
@@ -43031,12 +43033,12 @@ THH:mm:ss.sss
           1. Let _byteLength_ be TypedArrayLength(_taRecord_).
           1. Let _result_ be FromBase64(_string_, _alphabet_, _lastChunkHandling_, _byteLength_).
           1. Let _bytes_ be _result_.[[Bytes]].
-          1. Let _written_ be the length of _bytes_.
+          1. Let _written_ be the number of elements in _bytes_.
           1. NOTE: FromBase64 does not invoke any user code, so the ArrayBuffer backing _into_ cannot have been detached or shrunk.
           1. Assert: _written_ ≤ _byteLength_.
           1. Perform SetUint8ArrayBytes(_into_, _bytes_).
           1. If _result_.[[Error]] is not ~none~, then
-            1. Throw _result_.[[Error]].
+            1. Return ThrowCompletion(_result_.[[Error]]).
           1. Let _resultObject_ be OrdinaryObjectCreate(%Object.prototype%).
           1. Perform ! CreateDataPropertyOrThrow(_resultObject_, *"read"*, 𝔽(_result_.[[Read]])).
           1. Perform ! CreateDataPropertyOrThrow(_resultObject_, *"written"*, 𝔽(_written_)).
@@ -43055,12 +43057,12 @@ THH:mm:ss.sss
           1. Let _byteLength_ be TypedArrayLength(_taRecord_).
           1. Let _result_ be FromHex(_string_, _byteLength_).
           1. Let _bytes_ be _result_.[[Bytes]].
-          1. Let _written_ be the length of _bytes_.
+          1. Let _written_ be the number of elements in _bytes_.
           1. NOTE: FromHex does not invoke any user code, so the ArrayBuffer backing _into_ cannot have been detached or shrunk.
           1. Assert: _written_ ≤ _byteLength_.
           1. Perform SetUint8ArrayBytes(_into_, _bytes_).
           1. If _result_.[[Error]] is not ~none~, then
-            1. Throw _result_.[[Error]].
+            1. Return ThrowCompletion(_result_.[[Error]]).
           1. Let _resultObject_ be OrdinaryObjectCreate(%Object.prototype%).
           1. Perform ! CreateDataPropertyOrThrow(_resultObject_, *"read"*, 𝔽(_result_.[[Read]])).
           1. Perform ! CreateDataPropertyOrThrow(_resultObject_, *"written"*, 𝔽(_written_)).
@@ -43136,7 +43138,7 @@ THH:mm:ss.sss
           1. Let _byteOffset_ be _ta_.[[ByteOffset]].
           1. Let _bytes_ be a new empty List.
           1. Let _index_ be 0.
-          1. Repeat, while _index_ < _len_,
+          1. Repeat, while _index_ &lt; _len_,
             1. Let _byteIndex_ be _byteOffset_ + _index_.
             1. Let _byte_ be ℝ(GetValueFromBuffer(_buffer_, _byteIndex_, ~uint8~, *true*, ~unordered~)).
             1. Append _byte_ to _bytes_.
@@ -43155,9 +43157,9 @@ THH:mm:ss.sss
         <dl class="header"></dl>
         <emu-alg>
           1. Let _offset_ be _into_.[[ByteOffset]].
-          1. Let _len_ be the length of _bytes_.
+          1. Let _len_ be the number of elements in _bytes_.
           1. Let _index_ be 0.
-          1. Repeat, while _index_ < _len_,
+          1. Repeat, while _index_ &lt; _len_,
             1. Let _byte_ be _bytes_[_index_].
             1. Let _byteIndexInBuffer_ be _index_ + _offset_.
             1. Perform SetValueInBuffer(_into_.[[ViewedArrayBuffer]], _byteIndexInBuffer_, ~uint8~, 𝔽(_byte_), *true*, ~unordered~).
@@ -43168,7 +43170,7 @@ THH:mm:ss.sss
       <emu-clause id="sec-skipasciiwhitespace" type="abstract operation">
         <h1>
           SkipAsciiWhitespace (
-            _string_: a string,
+            _string_: a String,
             _index_: a non-negative integer,
           ): a non-negative integer
         </h1>
@@ -43176,7 +43178,7 @@ THH:mm:ss.sss
         </dl>
         <emu-alg>
           1. Let _length_ be the length of _string_.
-          1. Repeat, while _index_ < _length_,
+          1. Repeat, while _index_ &lt; _length_,
             1. Let _char_ be the code unit at index _index_ of _string_.
             1. If _char_ is neither 0x0009 (TAB), 0x000A (LF), 0x000C (FF), 0x000D (CR), nor 0x0020 (SPACE), then
               1. Return _index_.
@@ -43188,13 +43190,13 @@ THH:mm:ss.sss
       <emu-clause id="sec-decodebase64chunk" type="abstract operation">
         <h1>
           DecodeBase64Chunk (
-            _chunk_: a string,
+            _chunk_: a String,
             optional _throwOnExtraBits_: a boolean,
           ): either a normal completion containing a List of byte values, or a throw completion
         </h1>
         <dl class="header">
         </dl>
-        <p>The <dfn id="standard-base64-alphabet">standard base64 alphabet</dfn> is the String whose elements are the code units corresponding to every letter and number in the Unicode Basic Latin block along with *"+"* and *"/"*; that is, it is *"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"*.</p>
+        <p>The <dfn id="standard-base64-alphabet">standard base64 alphabet</dfn> is *"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"*, i.e., the String whose elements are the code units corresponding to every letter and number in the Unicode Basic Latin block along with *"+"* and *"/"*.</p>
         <emu-alg>
           1. Let _chunkLength_ be the length of _chunk_.
           1. If _chunkLength_ is 2, then
@@ -43223,7 +43225,7 @@ THH:mm:ss.sss
       <emu-clause id="sec-frombase64" type="abstract operation">
         <h1>
           FromBase64 (
-            _string_: a string,
+            _string_: a String,
             _alphabet_: *"base64"* or *"base64url"*,
             _lastChunkHandling_: *"loose"*, *"strict"*, or *"stop-before-partial"*,
             optional _maxLength_: a non-negative integer,
@@ -43234,12 +43236,12 @@ THH:mm:ss.sss
         <emu-alg>
           1. If _maxLength_ is not present, then
             1. Let _maxLength_ be 2<sup>53</sup> - 1.
-            1. NOTE: Because the input is a string, the length of strings is limited to 2<sup>53</sup> - 1 characters, and the output requires no more bytes than the input has characters, this limit can never be reached. However, it is editorially convenient to use a finite value here.
-          1. NOTE: The order of validation and decoding in the algorithm below is not observable. Implementations are encouraged to perform them in whatever order is most efficient, possibly interleaving validation with decoding, as long as the behaviour is observably equivalent.
+            1. NOTE: Because the input is a String, the length of Strings is limited to 2<sup>53</sup> - 1 characters, and the output requires no more bytes than the input has characters, this limit can never be reached. However, it is editorially convenient to use a finite value for _maxLength_.
+          1. NOTE: The order of validation and decoding in the algorithm below is not observable. Implementations are encouraged to perform them in whatever order is most efficient, possibly interleaving validation with decoding.
           1. If _maxLength_ is 0, then
             1. Return the Record { [[Read]]: 0, [[Bytes]]: « », [[Error]]: ~none~ }.
           1. Let _read_ be 0.
-          1. Let _bytes_ be « ».
+          1. Let _bytes_ be a new empty List.
           1. Let _chunk_ be the empty String.
           1. Let _chunkLength_ be 0.
           1. Let _index_ be 0.
@@ -43251,7 +43253,7 @@ THH:mm:ss.sss
                 1. If _lastChunkHandling_ is *"stop-before-partial"*, then
                   1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: ~none~ }.
                 1. Else if _lastChunkHandling_ is *"loose"*, then
-                  1. If _chunkLength_ is 1, then
+                  1. If _chunkLength_ = 1, then
                     1. Let _error_ be a new *SyntaxError* exception.
                     1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
                   1. Set _bytes_ to the list-concatenation of _bytes_ and ! DecodeBase64Chunk(_chunk_, *false*).
@@ -43263,7 +43265,7 @@ THH:mm:ss.sss
             1. Let _char_ be the substring of _string_ from _index_ to _index_ + 1.
             1. Set _index_ to _index_ + 1.
             1. If _char_ is *"="*, then
-              1. If _chunkLength_ < 2, then
+              1. If _chunkLength_ &lt; 2, then
                 1. Let _error_ be a new *SyntaxError* exception.
                 1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
               1. Set _index_ to SkipAsciiWhitespace(_string_, _index_).
@@ -43276,11 +43278,10 @@ THH:mm:ss.sss
                 1. Set _char_ to the substring of _string_ from _index_ to _index_ + 1.
                 1. If _char_ is *"="*, then
                   1. Set _index_ to SkipAsciiWhitespace(_string_, _index_ + 1).
-              1. If _index_ < _length_, then
+              1. If _index_ &lt; _length_, then
                 1. Let _error_ be a new *SyntaxError* exception.
                 1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
-              1. If _lastChunkHandling_ is *"strict"*, let _throwOnExtraBits_ be *true*.
-              1. Else, let _throwOnExtraBits_ be *false*.
+              1. If _lastChunkHandling_ is *"strict"*, let _throwOnExtraBits_ be *true*; otherwise let _throwOnExtraBits_ be *false*.
               1. Let _decodeResult_ be Completion(DecodeBase64Chunk(_chunk_, _throwOnExtraBits_)).
               1. If _decodeResult_ is an abrupt completion, then
                 1. Let _error_ be _decodeResult_.[[Value]].
@@ -43298,7 +43299,7 @@ THH:mm:ss.sss
             1. If the sole code unit of _char_ is not an element of the standard base64 alphabet, then
               1. Let _error_ be a new *SyntaxError* exception.
               1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
-            1. Let _remaining_ be _maxLength_ - the length of _bytes_.
+            1. Let _remaining_ be _maxLength_ - the number of elements in _bytes_.
             1. If _remaining_ = 1 and _chunkLength_ = 2, or if _remaining_ = 2 and _chunkLength_ = 3, then
               1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: ~none~ }.
             1. Set _chunk_ to the string-concatenation of _chunk_ and _char_.
@@ -43308,7 +43309,7 @@ THH:mm:ss.sss
               1. Set _chunk_ to the empty String.
               1. Set _chunkLength_ to 0.
               1. Set _read_ to _index_.
-              1. If the length of _bytes_ = _maxLength_, then
+              1. If the number of elements in _bytes_ = _maxLength_, then
                 1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: ~none~ }.
         </emu-alg>
       </emu-clause>
@@ -43316,27 +43317,27 @@ THH:mm:ss.sss
       <emu-clause id="sec-fromhex" type="abstract operation">
         <h1>
           FromHex (
-            _string_: a string,
+            _string_: a String,
             optional _maxLength_: a non-negative integer,
           ): a Record with fields [[Read]] (an integral Number), [[Bytes]] (a List of byte values), and [[Error]] (either ~none~ or a *SyntaxError* object)
         </h1>
         <dl class="header">
         </dl>
         <emu-alg>
-          1. If _maxLength_ is not present, let _maxLength_ be 2<sup>53</sup> - 1.
+          1. If _maxLength_ is not present, set _maxLength_ to 2<sup>53</sup> - 1.
           1. Let _length_ be the length of _string_.
-          1. Let _bytes_ be « ».
+          1. Let _bytes_ be a new empty List.
           1. Let _read_ be 0.
-          1. If _length_ modulo 2 is not 0, then
+          1. If _length_ modulo 2 ≠ 0, then
             1. Let _error_ be a new *SyntaxError* exception.
             1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
-          1. Repeat, while _read_ &lt; _length_ and the length of _bytes_ &lt; _maxLength_,
+          1. Repeat, while _read_ &lt; _length_ and the number of elements in _bytes_ &lt; _maxLength_,
             1. Let _hexits_ be the substring of _string_ from _read_ to _read_ + 2.
             1. If _hexits_ contains any code units which are not in *"0123456789abcdefABCDEF"*, then
               1. Let _error_ be a new *SyntaxError* exception.
               1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
             1. Set _read_ to _read_ + 2.
-            1. Let _byte_ be the integer value represented by _hexits_ in base-16 notation, using the letters A-F and a-f for digits with values 10 through 15.
+            1. Let _byte_ be the integer value represented by _hexits_ in base-16 notation, using the letters A* through *F* and *a* through *f* for digits with values 10 through 15.
             1. Append _byte_ to _bytes_.
           1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: ~none~ }.
         </emu-alg>
