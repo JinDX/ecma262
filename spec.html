@@ -42990,7 +42990,7 @@ THH:mm:ss.sss
             1. Return ThrowCompletion(_result_.[[Error]]).
           1. Let _resultLength_ be the number of elements in _result_.[[Bytes]].
           1. Let _ta_ be ? <emu-meta suppress-effects="user-code">AllocateTypedArray(*"Uint8Array"*, %Uint8Array%, *"%Uint8Array.prototype%"*, _resultLength_)</emu-meta>.
-          1. Assert: _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]].[[ArrayBufferByteLength]] = the number of elements in _result_.[[Bytes]].
+          1. Assert: _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]].[[ArrayBufferByteLength]] is the number of elements in _result_.[[Bytes]].
           1. Set the value at each index of _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]] to the value at the corresponding index of _result_.[[Bytes]].
           1. Return _ta_.
         </emu-alg>
@@ -43180,7 +43180,7 @@ THH:mm:ss.sss
           1. Let _length_ be the length of _string_.
           1. Repeat, while _index_ &lt; _length_,
             1. Let _char_ be the code unit at index _index_ of _string_.
-            1. If _char_ is neither 0x0009 (TAB), 0x000A (LF), 0x000C (FF), 0x000D (CR), nor 0x0020 (SPACE), then
+            1. If _char_ is not one of 0x0009 (TAB), 0x000A (LF), 0x000C (FF), 0x000D (CR), or 0x0020 (SPACE), then
               1. Return _index_.
             1. Set _index_ to _index_ + 1.
           1. Return _index_.
@@ -43191,7 +43191,7 @@ THH:mm:ss.sss
         <h1>
           DecodeBase64Chunk (
             _chunk_: a String,
-            optional _throwOnExtraBits_: a boolean,
+            _throwOnExtraBits_: a Boolean or ~not-applicable~,
           ): either a normal completion containing a List of byte values, or a throw completion
         </h1>
         <dl class="header">
@@ -43199,20 +43199,20 @@ THH:mm:ss.sss
         <p>The <dfn id="standard-base64-alphabet">standard base64 alphabet</dfn> is *"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"*, i.e., the String whose elements are the code units corresponding to every letter and number in the Unicode Basic Latin block along with *"+"* and *"/"*.</p>
         <emu-alg>
           1. Let _chunkLength_ be the length of _chunk_.
-          1. If _chunkLength_ is 2, then
+          1. If _chunkLength_ = 2, then
             1. Set _chunk_ to the string-concatenation of _chunk_ and *"AA"*.
-          1. Else if _chunkLength_ is 3, then
+          1. Else if _chunkLength_ = 3, then
             1. Set _chunk_ to the string-concatenation of _chunk_ and *"A"*.
           1. Else,
             1. Assert: _chunkLength_ is 4.
           1. Let _byteSequence_ be the unique sequence of 3 bytes resulting from decoding _chunk_ as base64 (such that applying the base64 encoding specified in section 4 of <a href="https://datatracker.ietf.org/doc/html/rfc4648">RFC 4648</a> to _byteSequence_ would produce _chunk_).
           1. Let _bytes_ be a List whose elements are the elements of _byteSequence_, in order.
-          1. If _chunkLength_ is 2, then
+          1. If _chunkLength_ = 2, then
             1. Assert: _throwOnExtraBits_ is present.
             1. If _throwOnExtraBits_ is *true* and _bytes_[1] ≠ 0, then
               1. Throw a *SyntaxError* exception.
             1. Return « _bytes_[0] ».
-          1. Else if _chunkLength_ is 3, then
+          1. Else if _chunkLength_ = 3, then
             1. Assert: _throwOnExtraBits_ is present.
             1. If _throwOnExtraBits_ is *true* and _bytes_[2] ≠ 0, then
               1. Throw a *SyntaxError* exception.
@@ -43235,10 +43235,10 @@ THH:mm:ss.sss
         </dl>
         <emu-alg>
           1. If _maxLength_ is not present, then
-            1. Let _maxLength_ be 2<sup>53</sup> - 1.
+            1. Set _maxLength_ to 2<sup>53</sup> - 1.
             1. NOTE: Because the input is a String, the length of Strings is limited to 2<sup>53</sup> - 1 characters, and the output requires no more bytes than the input has characters, this limit can never be reached. However, it is editorially convenient to use a finite value for _maxLength_.
           1. NOTE: The order of validation and decoding in the algorithm below is not observable. Implementations are encouraged to perform them in whatever order is most efficient, possibly interleaving validation with decoding.
-          1. If _maxLength_ is 0, then
+          1. If _maxLength_ = 0, then
             1. Return the Record { [[Read]]: 0, [[Bytes]]: « », [[Error]]: ~none~ }.
           1. Let _read_ be 0.
           1. Let _bytes_ be a new empty List.
@@ -43305,7 +43305,7 @@ THH:mm:ss.sss
             1. Set _chunk_ to the string-concatenation of _chunk_ and _char_.
             1. Set _chunkLength_ to the length of _chunk_.
             1. If _chunkLength_ = 4, then
-              1. Set _bytes_ to the list-concatenation of _bytes_ and ! DecodeBase64Chunk(_chunk_).
+              1. Set _bytes_ to the list-concatenation of _bytes_ and ! DecodeBase64Chunk(_chunk_, ~not-applicable~).
               1. Set _chunk_ to the empty String.
               1. Set _chunkLength_ to 0.
               1. Set _read_ to _index_.
@@ -43337,7 +43337,7 @@ THH:mm:ss.sss
               1. Let _error_ be a new *SyntaxError* exception.
               1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
             1. Set _read_ to _read_ + 2.
-            1. Let _byte_ be the integer value represented by _hexits_ in base-16 notation, using the letters A* through *F* and *a* through *f* for digits with values 10 through 15.
+            1. Let _byte_ be the integer value represented by _hexits_ in base-16 notation, using the letters *A* through *F* and *a* through *f* for digits with values 10 through 15.
             1. Append _byte_ to _bytes_.
           1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: ~none~ }.
         </emu-alg>
