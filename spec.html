@@ -43193,38 +43193,46 @@ THH:mm:ss.sss
         </emu-alg>
       </emu-clause>
 
-      <emu-clause id="sec-decodebase64chunk" type="abstract operation">
+      <emu-clause id="sec-decodefinalbase64chunk" type="abstract operation">
         <h1>
-          DecodeBase64Chunk (
-            _chunk_: a String,
-            _throwOnExtraBits_: a Boolean or ~not-applicable~,
+          DecodeFinalBase64Chunk (
+            _chunk_: a String of length 2 or 3,
+            _throwOnExtraBits_: a Boolean,
           ): either a normal completion containing a List of byte values, or a throw completion
+        </h1>
+        <dl class="header">
+        </dl>
+        <emu-alg>
+          1. Let _chunkLength_ be the length of _chunk_.
+          1. If _chunkLength_ = 2, then
+            1. Set _chunk_ to the string-concatenation of _chunk_ and *"AA"*.
+          1. Else,
+            1. Assert: _chunkLength_ is 3.
+            1. Set _chunk_ to the string-concatenation of _chunk_ and *"A"*.
+          1. Let _bytes_ be DecodeFullLengthBase64Chunk(_chunk_).
+          1. If _chunkLength_ = 2, then
+            1. If _throwOnExtraBits_ is *true* and _bytes_[1] ≠ 0, then
+              1. Throw a *SyntaxError* exception.
+            1. Return « _bytes_[0] ».
+          1. Else,
+            1. If _throwOnExtraBits_ is *true* and _bytes_[2] ≠ 0, then
+              1. Throw a *SyntaxError* exception.
+            1. Return « _bytes_[0], _bytes_[1] ».
+        </emu-alg>
+      </emu-clause>
+
+      <emu-clause id="sec-decodefulllengthbase64chunk" type="abstract operation">
+        <h1>
+          DecodeFullLengthBase64Chunk (
+            _chunk_: a String of length 4
+          ): a List of byte values of length 3
         </h1>
         <dl class="header">
         </dl>
         <p>The <dfn id="standard-base64-alphabet">standard base64 alphabet</dfn> is *"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"*, i.e., the String whose elements are the code units corresponding to every letter and number in the Unicode Basic Latin block along with *"+"* and *"/"*.</p>
         <emu-alg>
-          1. Let _chunkLength_ be the length of _chunk_.
-          1. If _chunkLength_ = 2, then
-            1. Set _chunk_ to the string-concatenation of _chunk_ and *"AA"*.
-          1. Else if _chunkLength_ = 3, then
-            1. Set _chunk_ to the string-concatenation of _chunk_ and *"A"*.
-          1. Else,
-            1. Assert: _chunkLength_ is 4.
           1. Let _byteSequence_ be the unique sequence of 3 bytes resulting from decoding _chunk_ as base64 (such that applying the base64 encoding specified in section 4 of <a href="https://datatracker.ietf.org/doc/html/rfc4648">RFC 4648</a> to _byteSequence_ would produce _chunk_).
-          1. Let _bytes_ be a List whose elements are the elements of _byteSequence_, in order.
-          1. If _chunkLength_ = 2, then
-            1. Assert: _throwOnExtraBits_ is present.
-            1. If _throwOnExtraBits_ is *true* and _bytes_[1] ≠ 0, then
-              1. Throw a *SyntaxError* exception.
-            1. Return « _bytes_[0] ».
-          1. Else if _chunkLength_ = 3, then
-            1. Assert: _throwOnExtraBits_ is present.
-            1. If _throwOnExtraBits_ is *true* and _bytes_[2] ≠ 0, then
-              1. Throw a *SyntaxError* exception.
-            1. Return « _bytes_[0], _bytes_[1] ».
-          1. Else,
-            1. Return _bytes_.
+          1. Return a List whose elements are the elements of _byteSequence_, in order.
         </emu-alg>
       </emu-clause>
 
@@ -43262,7 +43270,7 @@ THH:mm:ss.sss
                   1. If _chunkLength_ = 1, then
                     1. Let _error_ be a new *SyntaxError* exception.
                     1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
-                  1. Set _bytes_ to the list-concatenation of _bytes_ and ! DecodeBase64Chunk(_chunk_, *false*).
+                  1. Set _bytes_ to the list-concatenation of _bytes_ and ! DecodeFinalBase64Chunk(_chunk_, *false*).
                 1. Else,
                   1. Assert: _lastChunkHandling_ is *"strict"*.
                   1. Let _error_ be a new *SyntaxError* exception.
@@ -43288,7 +43296,7 @@ THH:mm:ss.sss
                 1. Let _error_ be a new *SyntaxError* exception.
                 1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
               1. If _lastChunkHandling_ is *"strict"*, let _throwOnExtraBits_ be *true*; otherwise let _throwOnExtraBits_ be *false*.
-              1. Let _decodeResult_ be Completion(DecodeBase64Chunk(_chunk_, _throwOnExtraBits_)).
+              1. Let _decodeResult_ be Completion(DecodeFinalBase64Chunk(_chunk_, _throwOnExtraBits_)).
               1. If _decodeResult_ is an abrupt completion, then
                 1. Let _error_ be _decodeResult_.[[Value]].
                 1. Return the Record { [[Read]]: _read_, [[Bytes]]: _bytes_, [[Error]]: _error_ }.
@@ -43311,7 +43319,7 @@ THH:mm:ss.sss
             1. Set _chunk_ to the string-concatenation of _chunk_ and _char_.
             1. Set _chunkLength_ to the length of _chunk_.
             1. If _chunkLength_ = 4, then
-              1. Set _bytes_ to the list-concatenation of _bytes_ and ! DecodeBase64Chunk(_chunk_, ~not-applicable~).
+              1. Set _bytes_ to the list-concatenation of _bytes_ and DecodeFullLengthBase64Chunk(_chunk_).
               1. Set _chunk_ to the empty String.
               1. Set _chunkLength_ to 0.
               1. Set _read_ to _index_.
