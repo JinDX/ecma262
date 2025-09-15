@@ -7064,8 +7064,14 @@
       </emu-alg>
     </emu-clause>
 
-    <emu-clause id="sec-getoptionsobject" aoid="GetOptionsObject">
-      <h1>GetOptionsObject ( _options_ )</h1>
+    <emu-clause id="sec-getoptionsobject" type="abstract operation">
+      <h1>
+        GetOptionsObject (
+           _options_: an ECMAScript language value,
+         ): either a normal completion containing an Object or a throw completion
+      </h1>
+      <dl class="header">
+      </dl>
       <emu-alg>
         1. If _options_ is *undefined*, then
           1. Return OrdinaryObjectCreate(*null*).
@@ -43005,7 +43011,7 @@ THH:mm:ss.sss
             1. Return ThrowCompletion(_result_.[[Error]]).
           1. Let _resultLength_ be the number of elements in _result_.[[Bytes]].
           1. Let _ta_ be ? <emu-meta suppress-effects="user-code">AllocateTypedArray(*"Uint8Array"*, %Uint8Array%, *"%Uint8Array.prototype%"*, _resultLength_)</emu-meta>.
-          1. Assert: _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]].[[ArrayBufferByteLength]] = the number of elements in _result_.[[Bytes]].
+          1. Assert: _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]].[[ArrayBufferByteLength]] is the number of elements in _result_.[[Bytes]].
           1. Set the value at each index of _ta_.[[ViewedArrayBuffer]].[[ArrayBufferData]] to the value at the corresponding index of _result_.[[Bytes]].
           1. Return _ta_.
         </emu-alg>
