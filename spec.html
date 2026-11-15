@@ -35419,7 +35419,7 @@ THH:mm:ss.sss
           <p>The argument is ignored.</p>
         </emu-note>
         <emu-note>
-          <p>This method is intentionally generic; it does not require that its *this* value be a Date. Therefore, it can be transferred to other kinds of objects for use as a method. However, it does require that any such object have a `toISOString` method.</p>
+          <p>This method is intentionally generic; it does not require that its *this* value be a Date. Therefore, it can be transferred to other kinds of objects for use as a method. If the algorithm reaches its final step, it requires the object to have a callable `toISOString` property.</p>
         </emu-note>
       </emu-clause>
 
