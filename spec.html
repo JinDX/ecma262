@@ -39281,7 +39281,7 @@ THH:mm:ss.sss
           </h1>
           <dl class="header">
             <dt>description</dt>
-            <dd>It returns a String representing a |Pattern| for matching _codePoint_. If _codePoint_ is white space or an ASCII punctuator, the returned value is an escape sequence. Otherwise, the returned value is a String representation of _codePoint_ itself.</dd>
+            <dd>It returns a String representing a |Pattern| for matching _codePoint_. The result is either an escape sequence or the UTF-16 encoding of _codePoint_.</dd>
           </dl>
 
           <emu-alg>
